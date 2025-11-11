@@ -38,23 +38,23 @@ jobs:
           PYTHONPATH: "${{ github.workspace }}"
         run: |
           python - <<'PY'
-from app.htdp_runner import TransformationPoint, TransformationRequest, run_transformation
+          from app.htdp_runner import TransformationPoint, TransformationRequest, run_transformation
 
-payload = TransformationRequest(
-    input_frame='25',
-    output_frame='26',
-    input_epoch=2015.0,
-    output_epoch=2020.0,
-    points=[
-        TransformationPoint(
-            name='CI-TEST',
-            latitude=40.0,
-            longitude=-105.0,
-            ellipsoid_height=1500.0,
-        )
-    ],
-)
-result = run_transformation(payload)
-assert result.results, 'Expected at least one transformation result'
-print(f"Transformed {len(result.results)} point(s)")
-PY
+          payload = TransformationRequest(
+              input_frame='25',
+              output_frame='26',
+              input_epoch=2015.0,
+              output_epoch=2020.0,
+              points=[
+                  TransformationPoint(
+                      name='CI-TEST',
+                      latitude=40.0,
+                      longitude=-105.0,
+                      ellipsoid_height=1500.0,
+                  )
+              ],
+          )
+          result = run_transformation(payload)
+          assert result.results, 'Expected at least one transformation result'
+          print(f"Transformed {len(result.results)} point(s)")
+          PY
