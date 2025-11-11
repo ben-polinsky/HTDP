@@ -23,3 +23,63 @@ Software code created by U.S. Government employees is not subject to copyright i
 ## IMPORTANT NOTICE
 *** HTDP should NOT be used to transform between NAD 83 realizations (2011, NSRS2007, HARN, etc.). It will not give correct results. To transform between NAD 83 realizations, use the NGS Coordinate Conversion and Transformation Tool (NCAT) instead. ***
 
+## Containerised web service
+
+This repository now includes a minimal REST API that wraps the interactive HTDP
+binary and exposes it as a web service. The service is implemented with
+[FastAPI](https://fastapi.tiangolo.com/) and can be built directly from the
+provided `Dockerfile`.
+
+### Build and run locally
+
+```
+docker build -t htdp-service .
+docker run --rm -p 8080:8080 htdp-service
+```
+
+Once the container is running you can explore the API documentation at
+<http://localhost:8080/docs>.
+
+The service provides the following endpoints:
+
+* `GET /health` – readiness probe returning `{ "status": "ok" }` when the
+  service is available.
+* `GET /frames` – list of reference-frame menu options that mirror HTDP's
+  interactive menu.
+* `POST /transform` – transform one or more positions. Supply a JSON payload of
+  the form:
+
+  ```json
+  {
+    "input_frame": "ITRF2014 or IGS14/IGb14",
+    "output_frame": "ITRF2020 or IGS20/IGb20",
+    "input_epoch": 2010.0,
+    "output_epoch": 2020.0,
+    "points": [
+      {
+        "name": "EXAMPLE",
+        "latitude": 40.0,
+        "longitude": -105.0,
+        "ellipsoid_height": 1500.0
+      }
+    ]
+  }
+  ```
+
+  Longitudes should follow the conventional GIS convention of positive-east; the
+  service handles conversion to the positive-west convention expected by HTDP.
+
+### Deploy to Fly.io
+
+The repository includes a starter `fly.toml` configuration. Update the `app`
+value to match your Fly.io application name and then deploy:
+
+```
+fly auth login
+fly launch --no-deploy  # optional, to inspect or tweak settings
+fly deploy
+```
+
+The service listens on port 8080 internally; Fly will expose it on the
+allocated public address.
+

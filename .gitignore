@@ -1,0 +1,11 @@
+# Build artefacts
+htdp
+*.o
+*.mod
+
+# Python
+__pycache__/
+*.pyc
+
+# Local data
+output/
